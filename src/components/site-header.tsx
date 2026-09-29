@@ -17,6 +17,7 @@ export function SiteHeader() {
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+          <Link href="/sign-in">Member sign in</Link>
           <Button asChild className="nav-action"><Link href="/request-workshop">Request a workshop</Link></Button>
         </nav>
         <Sheet>
@@ -31,6 +32,7 @@ export function SiteHeader() {
               {navigation.map((item) => (
                 <SheetClose asChild key={item.href}><Link href={item.href}>{item.label}</Link></SheetClose>
               ))}
+              <SheetClose asChild><Link href="/sign-in">Member sign in</Link></SheetClose>
               <SheetClose asChild><Link href="/request-workshop">Request a workshop</Link></SheetClose>
             </nav>
           </SheetContent>

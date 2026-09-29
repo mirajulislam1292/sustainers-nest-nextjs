@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { impactStats, pillars, programs } from "@/data/site";
+import { pillars, programs } from "@/data/site";
+import { getImpactStats } from "@/lib/public-data";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const impactStats = await getImpactStats();
   return (
     <>
       <section className="hero-shell">
@@ -49,7 +51,7 @@ export default function HomePage() {
         <div className="site-container">
           <div className="section-heading-row">
             <h2 id="impact-heading">The work, in numbers</h2>
-            <p>Figures currently published by Sustainers NEST.</p>
+            <p>Calculated from completed school visits and active volunteers.</p>
           </div>
           <dl className="impact-list">
             {impactStats.map((stat) => (

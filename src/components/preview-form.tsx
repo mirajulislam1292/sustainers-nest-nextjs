@@ -10,15 +10,16 @@ type PreviewFormProps = { kind: "contact" | "workshop" };
 
 export function PreviewForm({ kind }: PreviewFormProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
   const isWorkshop = kind === "workshop";
 
   if (submitted) {
     return (
       <div className="form-success" role="status">
-        <p>Thank you. Your form is complete in this preview.</p>
+        <p>Thank you. Your message is with the team.</p>
         <span>
-          Database delivery will be connected in the backend phase. For an immediate response,
-          email <a href="mailto:info@sustainersnest.org">info@sustainersnest.org</a>.
+          We will reply using the contact details you provided. For an urgent response, email <a href="mailto:info@sustainersnest.org">info@sustainersnest.org</a>.
         </span>
       </div>
     );
@@ -27,9 +28,18 @@ export function PreviewForm({ kind }: PreviewFormProps) {
   return (
     <form
       className="public-form"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
-        setSubmitted(true);
+        setPending(true);
+        setError("");
+        const data = Object.fromEntries(new FormData(event.currentTarget));
+        const response = await fetch(isWorkshop ? "/api/workshop-requests" : "/api/contact", {
+          method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data),
+        });
+        const result = await response.json().catch(() => ({}));
+        setPending(false);
+        if (response.ok) setSubmitted(true);
+        else setError(result.error || "We could not send this form. Please email us instead.");
       }}
     >
       <div className="form-row">
@@ -72,10 +82,15 @@ export function PreviewForm({ kind }: PreviewFormProps) {
         </Label>
         <Textarea id={`${kind}-message`} name="message" rows={6} required />
       </div>
-      <Button className="primary-button form-submit" size="lg" type="submit">
-        {isWorkshop ? "Send workshop request" : "Send message"}
+      <div className="field-group form-honeypot" aria-hidden="true">
+        <Label htmlFor={`${kind}-website`}>Website</Label>
+        <Input id={`${kind}-website`} name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+      <Button className="primary-button form-submit" size="lg" type="submit" disabled={pending}>
+        {pending ? "Sending…" : isWorkshop ? "Send workshop request" : "Send message"}
       </Button>
-      <p className="form-disclosure">This local preview does not transmit or store personal data.</p>
+      {error ? <p className="form-error" role="alert">{error}</p> : null}
+      <p className="form-disclosure">Your details are used only to respond to this request.</p>
     </form>
   );
 }

@@ -6,9 +6,9 @@ export const navigation = [
 ];
 
 export const impactStats = [
-  { value: "500+", label: "Young innovators" },
-  { value: "50+", label: "Projects launched" },
-  { value: "12+", label: "Countries reached" },
+  { value: "0", label: "Students reached" },
+  { value: "0", label: "Schools covered" },
+  { value: "0", label: "Active volunteers" },
 ];
 
 export const pillars = [
